@@ -2,7 +2,12 @@ const http = require('http');
 const WebSocket = require('ws');
 const fs = require('fs');
 
-const server = http.createServer();
+// Crea un server HTTP che risponde per evitare timeout di Render
+const server = http.createServer((req, res) => {
+  res.writeHead(200);
+  res.end('WebSocket server attivo su Render');
+});
+
 const wss = new WebSocket.Server({ server });
 
 wss.on('connection', function connection(ws) {
@@ -28,6 +33,8 @@ wss.on('connection', function connection(ws) {
   });
 });
 
-server.listen(8080, () => {
-  console.log('Server WebSocket in ascolto su ws://localhost:8080');
+// Porta richiesta da Render
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => {
+  console.log(`Server WebSocket in ascolto su port ${PORT}`);
 });
